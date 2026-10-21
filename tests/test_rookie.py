@@ -618,7 +618,7 @@ class CatalogTests(unittest.TestCase):
         )
         output = io.StringIO()
         with patch("rookie.load_config", side_effect=error), redirect_stderr(output):
-            self.assertEqual(rookie.main(["update"]), 1)
+            self.assertEqual(rookie.main(["--config", "/unused/config.json", "update"]), 1)
         self.assertIn("curl failed (exit 22)", output.getvalue())
         self.assertNotIn("test-api-key", output.getvalue())
 

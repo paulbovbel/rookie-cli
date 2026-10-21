@@ -381,8 +381,8 @@ def parser():
     result.add_argument(
         "--config",
         type=Path,
-        default=Path(os.environ.get("ROOKIE_CONFIG", "/run/agenix/rookie-mirror")),
-        help="mirror JSON containing baseUri and a Base64-encoded password",
+        default=os.environ.get("ROOKIE_CONFIG") or None,
+        help="mirror JSON containing baseUri and a Base64-encoded password (env: ROOKIE_CONFIG)",
     )
     result.add_argument(
         "--cache-dir",
@@ -462,6 +462,8 @@ def main(argv=None):
             return 0
         catalog = args.cache_dir / "VRP-GameList.txt"
         if args.command in ("update", "download") or not catalog.exists():
+            if args.config is None:
+                cli.error("mirror configuration required: use --config or ROOKIE_CONFIG")
             base, password, request_options = load_config(args.config)
         if args.command == "update" or not catalog.exists():
             releases = update_catalog(base, password, args.cache_dir, **request_options)

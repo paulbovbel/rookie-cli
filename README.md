@@ -40,13 +40,22 @@ The JSON contains `baseUri`, a Base64-encoded `password`, and optional `apiKey`
 and `userAgent` fields. Preserve the current mirror's API key and user agent;
 incorrect values can cause HTTP 403.
 
-The default config is `/run/agenix/rookie-mirror`. Override it with
-`ROOKIE_CONFIG` or `--config <json>`, and the API key
+Provide the config with `ROOKIE_CONFIG` or `--config <json>`, and override the API key
 with `ROOKIE_API_KEY`. Global flags (`--config`, `--cache-dir`) precede the
 subcommand. See `rookie <command> --help` for command options.
+
+Nix consumers can configure a default path with
+`rookie-cli.packages.${system}.default.override { configPath = "/path/to/mirror.json"; }`.
+This sets a wrapper default for `ROOKIE_CONFIG`; the environment and `--config`
+can override it. The config file itself is read at runtime.
 
 ## Development
 
 Run `nix develop`, then `python -m unittest discover -s tests`.
 Tests use a local mirror fixture and mocked ADB calls. `nix flake check` builds
 the package and runs the tests with their external dependencies.
+
+GitHub Actions runs tests in the Nix development environment, checks and builds
+the flake, and smoke-tests the packaged CLI. Keep `flake.lock` committed to pin
+the environment. Dependabot groups weekly Nix and GitHub Actions updates into
+one multi-ecosystem PR.

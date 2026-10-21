@@ -6,10 +6,11 @@
   p7zip,
   android-tools,
   aapt,
+  configPath ? null,
 }:
 python3Packages.buildPythonApplication {
   pname = "rookie-cli";
-  version = "1.0.0";
+  version = "0.0.1";
   src = lib.cleanSource ./.;
   pyproject = true;
   build-system = [python3Packages.setuptools];
@@ -22,7 +23,8 @@ python3Packages.buildPythonApplication {
   '';
   postInstall = ''
     wrapProgram "$out/bin/rookie" \
-      --prefix PATH : ${lib.makeBinPath [curl p7zip android-tools aapt]}
+      --prefix PATH : ${lib.makeBinPath [curl p7zip android-tools aapt]} \
+      ${lib.optionalString (configPath != null) "--set-default ROOKIE_CONFIG ${lib.escapeShellArg (toString configPath)}"}
   '';
   pythonImportsCheck = ["rookie"];
   meta = {
