@@ -31,8 +31,8 @@ def load_config(path):
     if not password:
         raise ValueError("Mirror password is empty")
     request_options = {
-        "api_key": os.environ.get("ROOKIE_API_KEY", data.get("apiKey", "")),
-        "user_agent": data.get("userAgent", USER_AGENT),
+        "api_key": os.environ.get("ROOKIE_API_KEY", ""),
+        "user_agent": USER_AGENT,
     }
     for value in request_options.values():
         if not isinstance(value, str) or "\r" in value or "\n" in value:

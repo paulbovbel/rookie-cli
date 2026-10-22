@@ -173,6 +173,9 @@ class MirrorTests(unittest.TestCase):
         shutil.which("curl") and shutil.which("7z"), "curl and 7z are required"
     )
     def test_catalog_download_extract_search_and_release(self):
+        environment = patch.dict("os.environ", {"ROOKIE_API_KEY": "test-api-key"})
+        environment.start()
+        self.addCleanup(environment.stop)
         self.server.require_auth = True
         source = self.root / "source"
         source.mkdir()
@@ -194,7 +197,6 @@ class MirrorTests(unittest.TestCase):
                 {
                     "baseUri": self.base,
                     "password": base64.b64encode(b"test-password").decode(),
-                    "apiKey": "test-api-key",
                 }
             )
         )
@@ -593,7 +595,7 @@ class ApkMatchTests(unittest.TestCase):
 
 
 class CatalogTests(unittest.TestCase):
-    def test_environment_api_key_overrides_config(self):
+    def test_request_settings_ignore_config(self):
         with tempfile.TemporaryDirectory() as temporary:
             config = Path(temporary) / "mirror.json"
             config.write_text(
@@ -609,7 +611,12 @@ class CatalogTests(unittest.TestCase):
             with patch.dict("os.environ", {"ROOKIE_API_KEY": "override-key"}):
                 _, _, options = rookie.load_config(config)
             self.assertEqual(
-                options, {"api_key": "override-key", "user_agent": "custom-agent"}
+                options, {"api_key": "override-key", "user_agent": rookie.USER_AGENT}
+            )
+            with patch.dict("os.environ", {}, clear=True):
+                _, _, options = rookie.load_config(config)
+            self.assertEqual(
+                options, {"api_key": "", "user_agent": rookie.USER_AGENT}
             )
 
     def test_network_errors_do_not_print_api_key(self):

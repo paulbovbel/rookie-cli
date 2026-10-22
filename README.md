@@ -25,8 +25,7 @@ rookie uninstall com.example.game
 - ADB requires an authorized, developer-mode headset. Commands use the first
   authorized device; use `--serial` to select another (`adb devices` lists them).
 - Installation checks free space, skips identical APKs, and syncs OBB resource
-  directories, including DLC. The space estimate counts all resources, even those
-  already installed. Split APKs and custom `install.txt` steps require manual installation.
+  directories. The space estimate counts all resources, even those already installed.
   Use `--skip-space-check` with `install` or `download --install` to bypass the
   conservative estimate when replacing existing resources.
 - `installed` lists non-system packages and headset storage; `--all` includes
@@ -36,13 +35,17 @@ rookie uninstall com.example.game
 
 ## Configuration
 
-The JSON contains `baseUri`, a Base64-encoded `password`, and optional `apiKey`
-and `userAgent` fields. Preserve the current mirror's API key and user agent;
-incorrect values can cause HTTP 403.
+The JSON config should be of the form:
 
-Provide the config with `ROOKIE_CONFIG` or `--config <json>`, and override the API key
-with `ROOKIE_API_KEY`. Global flags (`--config`, `--cache-dir`) precede the
-subcommand. See `rookie <command> --help` for command options.
+```
+{
+"baseUri":"...",
+"password":"..."
+}
+```
+
+Provide the config with `ROOKIE_CONFIG` or `--config <json>`, see
+`rookie <command> --help` for command options.
 
 Nix consumers can configure a default path with
 `rookie-cli.packages.${system}.default.override { configPath = "/path/to/mirror.json"; }`.

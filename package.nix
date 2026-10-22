@@ -7,6 +7,7 @@
   android-tools,
   aapt,
   configPath ? null,
+  apiKeyFile ? null,
 }:
 python3Packages.buildPythonApplication {
   pname = "rookie-cli";
@@ -24,6 +25,7 @@ python3Packages.buildPythonApplication {
   postInstall = ''
     wrapProgram "$out/bin/rookie" \
       --prefix PATH : ${lib.makeBinPath [curl p7zip android-tools aapt]} \
+      ${lib.optionalString (apiKeyFile != null) ''--set-default ROOKIE_API_KEY "$(cat ${lib.escapeShellArg (toString apiKeyFile)})"''} \
       ${lib.optionalString (configPath != null) "--set-default ROOKIE_CONFIG ${lib.escapeShellArg (toString configPath)}"}
   '';
   pythonImportsCheck = ["rookie"];

@@ -9,7 +9,9 @@
   in {
     packages = forAllSystems (system: let
       pkgs = nixpkgs.legacyPackages.${system};
-      rookie = pkgs.callPackage ./package.nix {};
+      rookie = pkgs.callPackage ./package.nix {
+        apiKeyFile = pkgs.callPackage ./nix/api-key.nix {};
+      };
     in {
       inherit rookie;
       default = rookie;
