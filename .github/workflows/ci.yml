@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  nix:
+    name: Nix
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Run tests in the development environment
+        run: nix develop --no-update-lock-file --command python -m unittest discover -s tests -v
+      - name: Check flake and build package
+        run: nix flake check --no-update-lock-file --print-build-logs
+      - name: Smoke-test packaged CLI
+        run: nix run --no-update-lock-file . -- --help
