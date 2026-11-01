@@ -32,6 +32,6 @@ python3Packages.buildPythonApplication {
   meta = {
     description = "ROOKIE mirror downloader and Quest sideloader";
     mainProgram = "rookie";
-    platforms = lib.platforms.linux;
+    platforms = ["x86_64-linux"];
   };
 }

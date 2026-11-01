@@ -6,6 +6,10 @@ Download ROOKIE mirror releases and manage Quest apps over ADB. Requires Python
 Install with `pip install .`, or run `nix run . -- <command>` to include all
 runtime dependencies. Build with `nix build`.
 
+The Nix package and development shell support `x86_64-linux`. Linux ARM is not
+currently supported because the required `aapt2` SDK package is unavailable for
+that platform in nixpkgs.
+
 ## Usage
 
 ```bash
